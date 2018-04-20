@@ -34,7 +34,7 @@ It is an Automation tool for IT setup. It's Main Use Cases
         shell: "echo 'helloworld'"
 ```
 
-# Old CM and Bash manual Deployment Problems
+### Problems in Bash Scripts and Old CM
 
 # Overview
 
@@ -70,10 +70,10 @@ It is an Automation tool for IT setup. It's Main Use Cases
   - Allows you to customize the behaviour of the systems.
   - Variable names should be letters, numbers, and underscores. Variables should always start with a letter.
   - Reference variables in your playbooks using the Jinja2 templating system
-  Eg.
-  ```
-     My amp goes to {{ max_amp_value }}
-  ```
+       - Eg.
+            ```
+               My amp goes to {{ max_amp_value }}
+            ```
   
 ### Ansible Facts
 
@@ -146,5 +146,96 @@ For more details about vagrant tool. Follow this [link](Vagrant.md)
 
 # Adhoc Commands
 
+- An ad-hoc command is something that you might type in to do something really quick, but don’t want to save for later.
+- Ad-hoc commands can also be used to do quick things that you might not necessarily want to write a full playbook.
+Let's see the examples of Ad-hoc commands.
+
+ ```
+   ansible all -m ping  -k
+   ansible node1 -a "ls -l /var/log/messages" -k
+   
+   #Installing applications
+   ansible node2 -m apt -a "name=elinks state=latest -k -b"
+   
+   # Now ping in ansible playbook
+   
+   ---
+   - hosts: all
+     tasks:
+        - ping: 
+     
+    # List hosts
+    ansible node1 --list-hosts
+    
+    #facts 
+    ansible -i hosts node1 -m setup -k -a "filter=ansible_default_ipv4"
+
+    #setting up Host variables
+    [node1]
+    <ip> home_dir=/home/ansible
+    
+    #Forking
+    ansible -i hosts all -a "df -h" -k -f 100
+    
+    #Copying
+    ansible -i hosts node1 -m copy -a "src={{home_dir}}/ping.yaml dest={{home_dir}}"
+    
+    #File ##Important
+    ansible -i hosts node1 -m file -a "dest={{ home_dir }}/ping.yaml mode=600" -k
+   
+   ```
+   
+ # Inventories
+   **STATIC Inventory**
+   - Can be in any formats
+   ```
+       badwolf.example.com:5309
+       jumper ansible_port=5555 ansible_host=192.0.2.50
+   ```
+   
+   *NOTE:*  Ansible 2.0 has deprecated the “ssh” from ansible_ssh_user, ansible_ssh_host, and ansible_ssh_port to become ansible_user, ansible_host, and ansible_port. If you are using a version of Ansible prior to 2.0, you should continue using the older style variables (ansible_ssh_*). These shorter variables are ignored, without warning, in older versions of Ansible.
+       
+    ```
+       # Adding Hosts can be done via Patterns.
+       [webservers]
+       www[01:50].example.com
+       
+       [databases]
+       db-[a:f].example.com
+    ```
+   You can also select the connection type and user on a per host basis:
+   
+   ```
+   [targets]
+   localhost              ansible_connection=local
+   other1.example.com     ansible_connection=ssh        ansible_user=mpdehaan
+   other2.example.com     ansible_connection=ssh        ansible_user=mdehaan
+   ```
+   Group Variable for Hosts
+   ```
+   [atlanta]
+   host1
+   host2
+
+   [atlanta:vars]
+   ntp_server=ntp.atlanta.example.com
+   proxy=proxy.atlanta.example.com
+   ```
+   NOTE: The Preferred behaviour is NOT to store in the main inventory file.
+   
+   - Default Groups
+     There are two default groups: all and ungrouped. all contains every host.ungrouped contains all hosts that don’t have another group aside from all. Every host will always belong to at least 2 groups. Though all and ungrouped are always present, they can be implicit and not appear in group listings like group_names.
+     
+   - Host and Group Variables can be stored in the individual files relative to the inventory file.
+   - Assuming the inventory file path is: `/etc/ansible/hosts`. Following applies.
+   
+        - if the host names 'mainhost', and is in the groups 'India' and 'Canada', then the variables in the YAML files at the following  locations will be made available to the host. NOTE: Can optionally end in '.yml' or 'yaml'
+          
+   ```
+   /etc/ansible/group_vars/India # can optionally end in '.yml', '.yaml', or '.json'
+   /etc/ansible/group_vars/Canada
+   /etc/ansible/host_vars/mainhost
+   ```
+  
 
 
