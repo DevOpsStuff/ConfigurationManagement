@@ -1,5 +1,3 @@
-[Virtual Machine](VM.md)
-
 ## Creating Virtual Machine
 
 * Install [vagrant](https://www.vagrantup.com/downloads.html).
