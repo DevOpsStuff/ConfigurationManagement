@@ -133,4 +133,18 @@ To set up an Ansible, I've used one master and two/three more nodes. Pre-requisi
  * Python 2.6 or above
  * Openssh
 
-For more details about vagrant tool. Follow this link
+For more details about vagrant tool. Follow this [link](Vagrant.md)
+
+```
+  vagrant init
+   // Remove the VagrantFile and Replace it with given VagrantFile.
+  vagrant up // it will download the associated images from vagrantCloud.
+  vagrant ssh
+```
+
+![Ansible](https://github.com/DevOpsStuff/ConfigurationManagement/blob/master/Ansiblediagram.PNG)
+
+# Adhoc Commands
+
+
+
