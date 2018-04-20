@@ -237,5 +237,15 @@ Let's see the examples of Ad-hoc commands.
    /etc/ansible/host_vars/mainhost
    ```
   
-
+   **Dynamic Inventories**
+   
+   - Test-based support, but has abilities to support Dynamic inventoriess.
+   - You can pull the inventories from a cloud Provider,LDAP,Cobbler.
+   - some cloud providers supported are EC2,RackSpace,Openstack.
+   - Will accept any kind of executable file as an inventory file
+        - `ansible-playbook playbook.yml -i ./dynamic.py`
+        - `ansible all -i /etc/ansible/ec2.py -m ping`
+    - If it is executable the ansible expects a json output.
+    - You could create a binary or a script as long as it outputs the JSON to output.
+   
 
