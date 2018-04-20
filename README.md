@@ -86,4 +86,51 @@ It is an Automation tool for IT setup. It's Main Use Cases
       gather_facts: no
     ```
     
-  
+### Playbooks
+
+ - A playbook is a task
+ - Playbooks are Instruction manuals, the hosts are the raw materials
+ - A Playbook is made of individual  plays.
+ - Playbook are in YAML format
+
+### ConfigFiles
+
+ - The default is "/etc/ansible/ansible.cfg"
+ - You can enable or disable options in the config files.
+ - The config file is read when a playbook is run.
+ - You can use config files other than default location.  But, the order as follows,
+     * ANSIBLE_CONFIG (environment variable if set)
+     * ansible.cfg (in the current directory)
+     * ~/.ansible.cfg (in the home directory)
+     * /etc/ansible/ansible.cfg
+     
+### Templates
+
+ - It contains all your configuration parameters.
+ - There is a ansible module called template.
+ - A template is definition and set of parameters for running ansible Job.
+ - Job templates are usefull to execute to same job many times.
+
+### Handlers
+
+ - A task in a Playbook can trigger an handler.
+ - Used to handle error conditions.
+ - Called at the end of play.
+ - Can have multiple task trigger an handler.
+ 
+### Roles
+
+### Ansible Vault
+ - It keeps sensitive data
+ - A secure store.
+ - Password and Encrypted files.
+ 
+# Ansible Installation 
+
+To set up an Ansible, I've used one master and two/three more nodes. Pre-requisites tools are
+ * Vagrant
+ * Virtual box
+ * Python 2.6 or above
+ * Openssh
+
+For more details about vagrant tool. Follow this link
