@@ -239,7 +239,7 @@ Let's see the examples of Ad-hoc commands.
   
    **Dynamic Inventories**
    
-   - Test-based support, but has abilities to support Dynamic inventoriess.
+   - Test-based support, but has abilities to support Dynamic inventories.
    - You can pull the inventories from a cloud Provider,LDAP,Cobbler.
    - some cloud providers supported are EC2,RackSpace,Openstack.
    - Will accept any kind of executable file as an inventory file
@@ -249,3 +249,30 @@ Let's see the examples of Ad-hoc commands.
     - You could create a binary or a script as long as it outputs the JSON to output.
    
 
+# Ansible PlayBooks
+
+   - Playbooks are written in YAML
+   - Playbooks should be idompotent
+
+# Modules
+    
+   - Modules documentation
+   - Ansible ships with No. of Modules which can be exectuted directly on the remote machine.
+   - Commonly Used Modules
+   
+         * Package Module (Instead of apt,yum,apt_repository)
+         
+         * File and Directories
+                 - file,lineinfile,blockinfile,copy,fetch,template,and stat, Script.
+                 
+         * System
+                 - service, user, group,cron,hostname,authorized_key,iptables,modprobe,
+                   kernel_blacklist,gluster_volume,lvm,and zfs.
+                   
+         * Various Useful
+                 - raw,synchronize,get_url,unarchive,ec2,and rds
+                 
+ ### Loops and ControlFlow
+   - "When" and with "not when"
+   - loops with "with_items"
+   - Error Handling and Tags
