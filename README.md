@@ -252,11 +252,14 @@ Let's see the examples of Ad-hoc commands.
 # Ansible PlayBooks
 
    - Playbooks are written in YAML
-   - Playbooks should be idompotent
+   - Playbooks should be idompotent. So you should be able to rerun them multiple times without problems. For instance, if a file is          going to be overwritten and cause problems you should check first and not change it.
+   - Plays are the individual tasks that are performed inside a playbook and a playbook is made up of one or more plays
+   - Playbooks describe a set of steps in a process
+   - They can be broken out to roles and templates
+   - Playbooks are more efficient for multiple tasks
 
-# Modules
-    
-   - Modules documentation
+### Modules
+   - Modules documentation.
    - Ansible ships with No. of Modules which can be exectuted directly on the remote machine.
    - Commonly Used Modules
    
@@ -274,5 +277,75 @@ Let's see the examples of Ad-hoc commands.
                  
  ### Loops and ControlFlow
    - "When" and with "not when"
-   - loops with "with_items"
+   - loops with "with_items" and dict with "With_dict"
    - Error Handling and Tags
+
+ ### Templates
+   - Templates use the template module. The module can take variables that you have defined and replace those in files. The use is to        replace the information and then send that information to the target server.
+   - Templates are processed by the Jinja2 templating language. Documentation about this language can be found here:                          http://jinja.pocoo.org/docs
+   
+   *Example:*
+   
+   - Here is what is in the template file called `template.j2`.
+       
+       ```
+            <p>
+            Hello there <p>
+       ```
+   - Here is a sample playbook that uses that template:
+      
+       ```
+       ---
+        - hosts: databases
+          become: yes
+          vars:
+               description: "{{ ansible_hostname }}"
+          tasks:
+           - name: write the index file
+             template: src=template.j2 dest=/var/www/html/index.ht ml
+             notify:
+              - restart httpd
+           - name: ensure apache is running
+             service: name=httpd state=running
+          handlers:
+          - name: restart httpd
+            service: name=httpd state=restarted
+            ServerName = {{description}}
+        ```
+   - Here is the contents of the `/var/www/html/index.html` file once the playbook has run:
+   
+        ```
+        <p>
+        Hello there <p>
+        ServerName = server
+        ```
+   - For this particular server, the hostname is 'server'.
+   
+# Roles:
+  - Roles in Ansible use the idea of using include files and combines them to form reusable sections.
+  - It allows you to reuse portions of your code easier. You break up the playbook into sections and when the playbook is run it pulls       all the sections together and runs against your target hosts
+  - Ansible roles must be in a particular format to work as expected. You need a folder and subfolders to be in a specified format.
+  - As an example, if we create a folder called Roles and we want to store our roles in there then we would create the fodler for the       project and its subfolders as needed. The ansible-galaxy command can be used to create the correct format as shown below
+  - Starting in the Roles directory. The command `ansible-galaxy init apache` will create the following tree and files:
+     ```
+     apache/
+        ├── defaults
+        │ └── main.yml
+        ├── files
+        ├── handlers
+        │ └── main.yml
+        ├── meta
+        │ └── main.yml
+        ├── README.md
+        ├── tasks
+        │ └── main.yml
+        ├── templates
+        ├── tests
+        │ ├── inventory
+        │ └── test.yml
+        └── vars
+        └── main.yml
+     ```
+  - We would edit the files as required for the portions that our project needs. For instance, we would edit the `apache/tasks/main.yml`     file to put in the tasks that are required. We would edit the `apache/vars/main.yml` to put in any variables that are needed and so     on.
+  - If you don't need a section then it's not used. So, for instance, if we put no data into `handlers/main.yml`, then it would be           ignored when the role is run.
+  
