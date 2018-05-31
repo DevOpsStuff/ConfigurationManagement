@@ -156,7 +156,9 @@ Let's see the examples of Ad-hoc commands.
  ```
  
  ##### Raw,shell,command #####
+ 
    *command*
+   
       -  Doesn't use shell (Bash/sh)
       -  can't use pipes or redirects
       
@@ -165,12 +167,15 @@ Let's see the examples of Ad-hoc commands.
    ```
    
    *Shell*
+   
       - Supports pipes and redirects
       - Can't get messed up by user settings
+      
    ```
    $ anisble Slave1 -b -m shell -a 'echo "hello" > /root/hello.txt'
    ```
    *raw*
+   
       - Just sends commands over SSH
       - Doesn't need Python
       
@@ -224,7 +229,6 @@ Let's see the examples of Ad-hoc commands.
     $ ansible -i hosts slave1 -m file -a "path=/root/hello.txt state=absent"
     ```
     
-   ```
    
  # Inventories
    **STATIC Inventory**
