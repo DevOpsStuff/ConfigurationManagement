@@ -153,36 +153,77 @@ Let's see the examples of Ad-hoc commands.
  ```
    ansible all -m ping  -k
    ansible node1 -a "ls -l /var/log/messages" -k
+ ```
+ 
+ ##### Raw,shell,command #####
+   *command*
+      -  Doesn't use shell (Bash/sh)
+      -  can't use pipes or redirects
+      
+   ```
+   $ ansible Slave1 -b -m command -a 'echo "hello" > /root/hello.txt'
+   ```
    
-   #Installing applications
-   ansible node2 -m apt -a "name=elinks state=latest -k -b"
+   *Shell*
+      - Supports pipes and redirects
+      - Can't get messed up by user settings
+   ```
+   $ anisble Slave1 -b -m shell -a 'echo "hello" > /root/hello.txt'
+   ```
+   *raw*
+      - Just sends commands over SSH
+      - Doesn't need Python
+      
+   ```
+   $ ansible Slave1 -b -m raw -a 'echo "hello" >> /root/hello.txt'
+   ```
    
-   # Now ping in ansible playbook
+   ###### Installing applications
    
+   ```
+   $ ansible node2 -m apt -a "name=elinks state=latest -k -b"  -> apt
+   $ ansible node2 -m yum -a "name=elinks state=latest -k -b"  -> yum
+   $ ansible node2 -m pkg -a "name=elinks state=latest -k -b"  -> pkg
+   ```
+   
+   ###### Now ping in ansible playbook
+   ```
    ---
    - hosts: all
      tasks:
         - ping: 
-     
-    # List hosts
-    ansible node1 --list-hosts
+        
+   ``` 
     
-    #facts 
-    ansible -i hosts node1 -m setup -k -a "filter=ansible_default_ipv4"
-
-    #setting up Host variables
+   ###### List hosts
+   ```
+   $ ansible node1 --list-hosts
+   ```
+   
+   ###### facts 
+    ```
+    $ ansible -i hosts node1 -m setup -k -a "filter=ansible_default_ipv4"
+    ```
+    
+   ###### setting up Host variables
     [node1]
     <ip> home_dir=/home/ansible
     
-    #Forking
-    ansible -i hosts all -a "df -h" -k -f 100
+   ###### Forking
+    ```
+    $ ansible -i hosts all -a "df -h" -k -f 100
     
-    #Copying
-    ansible -i hosts node1 -m copy -a "src={{home_dir}}/ping.yaml dest={{home_dir}}"
+   ###### Copying
+    ```
+    $ ansible -i hosts node1 -m copy -a "src={{home_dir}}/ping.yaml dest={{home_dir}}"
+    ```
     
-    #File ##Important
-    ansible -i hosts node1 -m file -a "dest={{ home_dir }}/ping.yaml mode=600" -k
-   
+   ###### File
+    ```
+    $ ansible -i hosts node1 -m file -a "dest={{ home_dir }}/ping.yaml mode=600" -k
+    $ ansible -i hosts slave1 -m file -a "path=/root/hello.txt state=absent"
+    ```
+    
    ```
    
  # Inventories
