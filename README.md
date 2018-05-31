@@ -144,6 +144,27 @@ For more details about vagrant tool. Follow this [link](Vagrant.md)
 
 ![Ansible](https://github.com/DevOpsStuff/ConfigurationManagement/blob/master/Ansiblediagram.PNG)
 
+### Planning (Connection from Server to clients Using SSH ways)
+  - username
+  - sudo or root
+  - passwordless keys or ssh-agent
+
+### Configuring Ansible Clients
+   *master*
+   ```
+   $ cat /etc/hosts #(add client address)
+   $ ssh-keygen 
+   $ cd ~/.ssh
+   $ ssh-copy-id -i .ssh/id_rsa.pub ansible@slave1
+   $ ssh-copy-id -i .ssh/id_rsa.pub ansible@slave2
+   $ ssh-copy-id -i .ssh/id_rsa.pub ansible@slave3
+   ```
+   *Clients*
+   ```
+   $ visudo
+   add -> "ansible ALL=(ALL) NOPASSWD: ALL" on all ansible clients
+   ```
+
 # Adhoc Commands
 
 - An ad-hoc command is something that you might type in to do something really quick, but don’t want to save for later.
@@ -230,8 +251,9 @@ Let's see the examples of Ad-hoc commands.
     ```
     
    
- # Inventories
-   **STATIC Inventory**
+ # [Inventories](https://docs.ansible.com/ansible/2.3/intro_inventory.html#list-of-behavioral-inventory-parameters)
+   **Static Inventory**
+   
    - Can be in any formats
    ```
        badwolf.example.com:5309
@@ -240,14 +262,14 @@ Let's see the examples of Ad-hoc commands.
    
    *NOTE:*  Ansible 2.0 has deprecated the “ssh” from ansible_ssh_user, ansible_ssh_host, and ansible_ssh_port to become ansible_user, ansible_host, and ansible_port. If you are using a version of Ansible prior to 2.0, you should continue using the older style variables (ansible_ssh_*). These shorter variables are ignored, without warning, in older versions of Ansible.
        
-    ```
+   ```
        # Adding Hosts can be done via Patterns.
        [webservers]
        www[01:50].example.com
        
        [databases]
        db-[a:f].example.com
-    ```
+   ```
    You can also select the connection type and user on a per host basis:
    
    ```
@@ -266,7 +288,7 @@ Let's see the examples of Ad-hoc commands.
    ntp_server=ntp.atlanta.example.com
    proxy=proxy.atlanta.example.com
    ```
-   NOTE: The Preferred behaviour is NOT to store in the main inventory file.
+   *NOTE:* The Preferred behaviour is NOT to store in the main inventory file.
    
    - Default Groups
      There are two default groups: all and ungrouped. all contains every host.ungrouped contains all hosts that don’t have another group aside from all. Every host will always belong to at least 2 groups. Though all and ungrouped are always present, they can be implicit and not appear in group listings like group_names.
@@ -293,17 +315,17 @@ Let's see the examples of Ad-hoc commands.
     - If it is executable the ansible expects a json output.
     - You could create a binary or a script as long as it outputs the JSON to output.
    
-
 # Ansible PlayBooks
 
    - Playbooks are written in YAML
-   - Playbooks should be idompotent. So you should be able to rerun them multiple times without problems. For instance, if a file is          going to be overwritten and cause problems you should check first and not change it.
+   - Playbooks should be idompotent. So you should be able to rerun them multiple times without problems. For instance, if a file is going to be overwritten and cause problems you should check first and not change it.
    - Plays are the individual tasks that are performed inside a playbook and a playbook is made up of one or more plays
    - Playbooks describe a set of steps in a process
    - They can be broken out to roles and templates
    - Playbooks are more efficient for multiple tasks
 
 ### Modules
+
    - Modules documentation.
    - Ansible ships with No. of Modules which can be exectuted directly on the remote machine.
    - Commonly Used Modules
@@ -321,12 +343,14 @@ Let's see the examples of Ad-hoc commands.
                  - raw,synchronize,get_url,unarchive,ec2,and rds
                  
  ### Loops and ControlFlow
+ 
    - "When" and with "not when"
    - loops with "with_items" and dict with "With_dict"
    - Error Handling and Tags
 
  ### Templates
-   - Templates use the template module. The module can take variables that you have defined and replace those in files. The use is to        replace the information and then send that information to the target server.
+ 
+   - Templates use the template module. The module can take variables that you have defined and replace those in files. The use is to  replace the information and then send that information to the target server.
    - Templates are processed by the Jinja2 templating language. Documentation about this language can be found here:                          http://jinja.pocoo.org/docs
    
    *Example:*
@@ -367,6 +391,7 @@ Let's see the examples of Ad-hoc commands.
    - For this particular server, the hostname is 'server'.
    
 # Roles:
+
   - Roles in Ansible use the idea of using include files and combines them to form reusable sections.
   - It allows you to reuse portions of your code easier. You break up the playbook into sections and when the playbook is run it pulls       all the sections together and runs against your target hosts
   - Ansible roles must be in a particular format to work as expected. You need a folder and subfolders to be in a specified format.
@@ -392,5 +417,5 @@ Let's see the examples of Ad-hoc commands.
         └── main.yml
      ```
   - We would edit the files as required for the portions that our project needs. For instance, we would edit the `apache/tasks/main.yml`     file to put in the tasks that are required. We would edit the `apache/vars/main.yml` to put in any variables that are needed and so     on.
-  - If you don't need a section then it's not used. So, for instance, if we put no data into `handlers/main.yml`, then it would be           ignored when the role is run.
+  - If you don't need a section then it's not used. So, for instance, if we put no data into `handlers/main.yml`, then it would be ignored when the role is run.
   
