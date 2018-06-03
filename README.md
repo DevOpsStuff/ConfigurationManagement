@@ -62,6 +62,10 @@ It is an Automation tool for IT setup. It's Main Use Cases
        port: 8080
        connec_tcp: http
    ```
+### Idempotentance and State management
+   - Runs multiple times
+   - Checks desired state vs Current states everytime.
+   
 
 # Overview
 
@@ -76,13 +80,17 @@ It is an Automation tool for IT setup. It's Main Use Cases
 - Vault
 - Galaxy 
 
-### Inventories
+### Directory Layout [BestPractices](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html?highlight=best%20practices#best-practices)
 
+### [Inventories](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#working-with-inventory)
+
+ - Inventories are where you find the information about the hosts you will manage with Ansible
  - Static or Local Files (eg. /etc/ansible/hosts)
+ - It's where you group the hosts that will be managed in ansible.
  - Can be Dynamic too. And provided via program
  - Can be called via "-i" options 
  
-### Modules
+### [Modules](https://docs.ansible.com/ansible/latest/modules/modules_by_category.html#module-index)
 
  - Modules (also referred to as “task plugins” or “library plugins”) are discrete unites of code
  - Can be used from the command line or in a playbook task.
@@ -113,9 +121,9 @@ It is an Automation tool for IT setup. It's Main Use Cases
       gather_facts: no
     ```
     
-### Playbooks
+### Play and Playbooks
 
- - A playbook is a task
+ - A play is a task
  - Playbooks are Instruction manuals, the hosts are the raw materials
  - A Playbook is made of individual  plays.
  - Playbook are in YAML format
@@ -146,6 +154,9 @@ It is an Automation tool for IT setup. It's Main Use Cases
  - Can have multiple task trigger an handler.
  
 ### Roles
+ - A playbook is a standalone file Ansible runs to set up your servers
+ - Roles can be thoufgt of as a playbok that splits in to multiple servers.
+ - Ansible Galaxy is a repository for roles people have created a tasks.
 
 ### Ansible Vault
  - It keeps sensitive data
@@ -261,6 +272,7 @@ Let's see the examples of Ad-hoc commands.
    ###### setting up Host variables
     [node1]
     <ip> home_dir=/home/ansible
+    $ ansible Slave1 -b -a "touch testfile" --become-user tempuser
     
    ###### Forking
     ```
@@ -279,9 +291,12 @@ Let's see the examples of Ad-hoc commands.
     
    
  # [Inventories](https://docs.ansible.com/ansible/2.3/intro_inventory.html#list-of-behavioral-inventory-parameters)
+   
    **Static Inventory**
    
-   - Can be in any formats
+   - Can be in any formats.
+   - They won't change unless you make changes to them.
+   - A lot of info can be used by ansible.
    ```
        badwolf.example.com:5309
        jumper ansible_port=5555 ansible_host=192.0.2.50
@@ -317,7 +332,8 @@ Let's see the examples of Ad-hoc commands.
    ```
    *NOTE:* The Preferred behaviour is NOT to store in the main inventory file.
    
-   - Default Groups
+   - **Default Groups**
+   
      There are two default groups: all and ungrouped. all contains every host.ungrouped contains all hosts that don’t have another group aside from all. Every host will always belong to at least 2 groups. Though all and ungrouped are always present, they can be implicit and not appear in group listings like group_names.
      
    - Host and Group Variables can be stored in the individual files relative to the inventory file.
