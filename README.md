@@ -13,12 +13,18 @@ It is an Automation tool for IT setup. It's Main Use Cases
 
 # Why Ansible?
 
-- Simple to use
-- AgentLess (requires only Python and SSH )
-- Sensible Design
+- Simple to use -> 
+- AgentLess (requires only Python and SSH ) - A Push Model
+  Linux -> SSH, Windows -> WinRM
+- Sensible Design -> All Modules are included. So integration is easy.
 - Eg: Manual Vs ShellScript Vs Playbook
 
-# YAML Basics
+## Push Vs Pull Model
+
+ - In push Model, We can controll the sequence. Need to be on the same subnet, So not that much scalable.
+ - In pull Model, Moe scalable and flexiable.
+
+## YAML Basics
 
 - Key : Value Pair
 - "---" starts with for yaml file
@@ -35,6 +41,27 @@ It is an Automation tool for IT setup. It's Main Use Cases
 ```
 
 ### Problems in Bash Scripts and Old CM
+ -> IAAS.
+ -> Keep Everything in Git.
+
+### Code Vs Data
+    
+   Code - Template/Tasks 
+   ```
+        Apache Application
+        
+        User: {{ user }}
+        port: {{ port }}
+        conn: {{ connec_tcp }}
+   ```
+   Data - Vars
+   
+   ```
+       host vars/groups vars
+       user: alice
+       port: 8080
+       connec_tcp: http
+   ```
 
 # Overview
 
