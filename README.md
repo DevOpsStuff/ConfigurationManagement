@@ -41,8 +41,9 @@ It is an Automation tool for IT setup. It's Main Use Cases
 ```
 
 ### Problems in Bash Scripts and Old CM
- -> IAAS.
- -> Keep Everything in Git.
+
+ - IAAS
+ - Keep Everything in Git
 
 ### Code Vs Data
     
