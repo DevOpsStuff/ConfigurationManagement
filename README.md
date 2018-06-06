@@ -244,50 +244,46 @@ Let's see the examples of Ad-hoc commands.
    
    ###### Installing applications
    
-   ```
-   $ ansible node2 -m apt -a "name=elinks state=latest -k -b"  -> apt
-   $ ansible node2 -m yum -a "name=elinks state=latest -k -b"  -> yum
-   $ ansible node2 -m pkg -a "name=elinks state=latest -k -b"  -> pkg
-   ```
-   
+     $ ansible node2 -m apt -a "name=elinks state=latest -k -b"  -> apt
+     $ ansible node2 -m yum -a "name=elinks state=latest -k -b"  -> yum
+     $ ansible node2 -m pkg -a "name=elinks state=latest -k -b"  -> pkg
+  
    ###### Now ping in ansible playbook
-   ```
-   ---
-   - hosts: all
-     tasks:
-        - ping: 
-        
-   ``` 
+  
+      ---
+      - hosts: all
+        tasks:
+         - ping: 
+      
     
    ###### List hosts
-   ```
-   $ ansible node1 --list-hosts
-   ```
+   
+    $ ansible node1 --list-hosts
    
    ###### facts 
-    ```
+    
     $ ansible -i hosts node1 -m setup -k -a "filter=ansible_default_ipv4"
-    ```
     
    ###### setting up Host variables
+   
     [node1]
     <ip> home_dir=/home/ansible
     $ ansible Slave1 -b -a "touch testfile" --become-user tempuser
     
    ###### Forking
-    ```
+   
     $ ansible -i hosts all -a "df -h" -k -f 100
     
    ###### Copying
-    ```
+    
     $ ansible -i hosts node1 -m copy -a "src={{home_dir}}/ping.yaml dest={{home_dir}}"
-    ```
+    
     
    ###### File
-    ```
+    
     $ ansible -i hosts node1 -m file -a "dest={{ home_dir }}/ping.yaml mode=600" -k
     $ ansible -i hosts slave1 -m file -a "path=/root/hello.txt state=absent"
-    ```
+    
     
    
  # [Inventories](https://docs.ansible.com/ansible/2.3/intro_inventory.html#list-of-behavioral-inventory-parameters)
@@ -385,28 +381,53 @@ Let's see the examples of Ad-hoc commands.
          * Various Useful
                  - raw,synchronize,get_url,unarchive,ec2,and rds
                  
- ### Loops and ControlFlow
+ ### ControlFlow,Conditionals and Error Handling
  
-   - "When" and with "not when"
-   - loops with "with_items" and dict with "With_dict"
+**Conditionals**
+
+   - "When" and with "not when" , more examples [here](https://gist.github.com/marcusphi/6791404)
+   
+**Loops**
+   - Ansible loop types. To see a full list [click here](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html)
+       
+   - loops with "with_items" and dict with "With_dict", More loop types
+   
+          - with_file: Evaluated a list of file
+          - with_fileglob: Evaluated a list of files based on glob pattern
+          - with_sequence and with_random_choice
+       
+**Handlers**
+  - Handlers are just like tasks,but runs only when notifies
+      
+        tasks:
+        - name: Install nginx
+          package: name=nginx state=latest
+          notify:
+              - start nginx
+          
+          handlers:
+              name: start nginx
+              service: name=nginx state=started
+         
+ **Error Handling**
    - Error Handling and Tags
 
  ### Templates
  
    - Templates use the template module. The module can take variables that you have defined and replace those in files. The use is to  replace the information and then send that information to the target server.
    - Templates are processed by the Jinja2 templating language. Documentation about this language can be found here:                          http://jinja.pocoo.org/docs
-   
    *Example:*
    
    - Here is what is in the template file called `template.j2`.
        
-       ```
+       
             <p>
-            Hello there <p>
-       ```
+            Hello there 
+            <p>
+     
    - Here is a sample playbook that uses that template:
       
-       ```
+     ```
        ---
         - hosts: databases
           become: yes
