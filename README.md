@@ -105,6 +105,7 @@ It is an Automation tool for IT setup. It's Main Use Cases
  
   - Allows you to customize the behaviour of the systems.
   - Variable names should be letters, numbers, and underscores. Variables should always start with a letter.
+  - Variable Precedence [order](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable)
   - Reference variables in your playbooks using the Jinja2 templating system
        - Eg.
             ```
@@ -412,7 +413,27 @@ Let's see the examples of Ad-hoc commands.
          
  **Error Handling**
    - Error Handling and Tags
-
+   
+          ---
+          - name: testing blocks
+            hosts: all
+            become: yes
+            tasks:
+            - block:
+                - name: copying in a block
+                  copy: src=/file1 dest=/tmp/blocks
+              rescue:
+                - debug: msg="error message"
+              always:
+                - debug: msg="this will always execute"
+           
+            #nested blocks
+            - block:
+              - block:
+                 - block:
+                     - debug: msg="this is nested block"
+                  
+          
  ### Templates
  
    - Templates use the template module. The module can take variables that you have defined and replace those in files. The use is to  replace the information and then send that information to the target server.
