@@ -382,59 +382,8 @@ Let's see the examples of Ad-hoc commands.
                    
          * Various Useful
                  - raw,synchronize,get_url,unarchive,ec2,and rds
-                 
- ### ControlFlow,Conditionals and Error Handling
- 
-**Conditionals**
-
-   - "When" and with "not when" , more examples [here](https://gist.github.com/marcusphi/6791404)
-   
-**Loops**
-   - Ansible loop types. To see a full list [click here](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html)
-       
-   - loops with "with_items" and dict with "With_dict", More loop types
-   
-          - with_file: Evaluated a list of file
-          - with_fileglob: Evaluated a list of files based on glob pattern
-          - with_sequence and with_random_choice
-       
-**Handlers**
-  - Handlers are just like tasks,but runs only when notifies
-      
-        tasks:
-        - name: Install nginx
-          package: name=nginx state=latest
-          notify:
-              - start nginx
           
-          handlers:
-              name: start nginx
-              service: name=nginx state=started
-         
- **Error Handling**
-   - Error Handling and Tags
-   
-          ---
-          - name: testing blocks
-            hosts: all
-            become: yes
-            tasks:
-            - block:
-                - name: copying in a block
-                  copy: src=/file1 dest=/tmp/blocks
-              rescue:
-                - debug: msg="error message"
-              always:
-                - debug: msg="this will always execute"
-           
-            #nested blocks
-            - block:
-              - block:
-                 - block:
-                     - debug: msg="this is nested block"
-                  
-          
- ### Templates
+### Templates
  
    - Templates use the template module. The module can take variables that you have defined and replace those in files. The use is to  replace the information and then send that information to the target server.
    - Templates are processed by the Jinja2 templating language. Documentation about this language can be found here:                          http://jinja.pocoo.org/docs
@@ -442,8 +391,7 @@ Let's see the examples of Ad-hoc commands.
    
    - Here is what is in the template file called `template.j2`.
        
-       
-            <p>
+        <p>
             Hello there 
             <p>
      
@@ -475,6 +423,125 @@ Let's see the examples of Ad-hoc commands.
         ServerName = server
         ```
    - For this particular server, the hostname is 'server'.
+                            
+ ### ControlFlow,Conditionals and Error Handling
+ 
+**Conditionals**
+
+   - "When" and with "not when" , more examples [here](https://gist.github.com/marcusphi/6791404)
+   
+**Loops**
+   - Ansible loop types. To see a full list [click here](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html)
+       
+   - loops with "with_items" and dict with "With_dict", More loop types
+   
+          - with_file: Evaluated a list of file
+          - with_fileglob: Evaluated a list of files based on glob pattern
+          - with_sequence and with_random_choice
+       
+**Handlers**
+  - Handlers are just like tasks,but runs only when notifies
+      
+        tasks:
+        - name: Install nginx
+          package: name=nginx state=latest
+          notify:
+              - start nginx
+          
+          handlers:
+              name: start nginx
+              service: name=nginx state=started
+         
+ [**Error Handling**](https://docs.ansible.com/ansible/latest/user_guide/playbooks_blocks.html#error-handling)
+ 
+   - Error handling can be done using below concepts,.
+   
+    ```
+     - ignore_erros: True
+     - failed_when: result | failed
+     - failed_when: output.stdout.find('fail')!=-1  # this is stop the playbook immediately
+     - changed_when
+     ### Try catch finally
+     - resuce and always
+    ```
+   
+[**Blocks**](https://docs.ansible.com/ansible/latest/user_guide/playbooks_blocks.html#blocks)
+ 
+ Blocks allow for logical grouping of tasks and in play error handling. Most of what you can apply to a single task can be applied at the block level, which also makes it much easier to set data or directives common to the tasks. This does not mean the directive affects the block itself, but is inherited by the tasks enclosed by a block. i.e. a when will be applied to the tasks, not the block itself.
+
+          ---
+          - name: testing blocks
+            hosts: all
+            become: yes
+            tasks:
+            - block:
+                - name: copying in a block
+                  copy: src=/file1 dest=/tmp/blocks
+              rescue:
+                - debug: msg="error message"
+              always:
+                - debug: msg="this will always execute"
+           
+            #nested blocks
+            - block:
+              - block:
+                 - block:
+                     - debug: msg="this is nested block"
+ 
+ [**Privilage Escalation**](https://docs.ansible.com/ansible/latest/user_guide/become.html#understanding-privilege-escalation)
+ 
+  - Checkout the 'privilage escation part' in  the `/etc/ansible/ansible.cfg`.
+  
+ [**Delegation and Local Facts**](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#delegation)
+ 
+          --- 
+          - name: Delegation
+            hosts: node3
+            become: yes
+            
+            tasks:
+            - name: restart machine
+              shell: sleep 2 && shutdown -r now "Ansible updates have happened"
+              async: 1
+              poll: 0
+              ignore_erros: True
+            - name: waiting for server to come back
+              wait_for: host={{inventory_hostname}} state=started delay=30 timeout=300
+              become: no
+              delegate_to: 127.0.0.1
+            - name: wait for servers to come basck
+              local_action: wait for host={{inventory_hostname}} state=started delay=30 timeout=300
+              become: no
+              
+         - name: testing delegate facts
+           hosts: node3
+           become: yes
+           tasks:
+           - name: gather local facts
+             setup: 
+             delegate_to: 127.0.0.1
+             delegate_facts: true
+             
+ **Debugging Playbook**
+ 
+ - There are many ways we can debug the playbooks. Yaml validator
+     * `--syntax-check`
+        eg. ansible-playbook --syntax-check playbook.yaml
+        
+     * `-vvv` verbose mode
+        eg. ansible-playbook playbook.yaml -vvv
+        
+     * `--check` is like dry-run but it will not install anything.
+        eg. ansible-playbook playbook.yaml --check 
+     
+     * `--start-at-task` if some tasks are failed in the middle and we want to start that task when we run next time.
+        eg. ansible-playbook playbook.yaml --start-at-task="<task name>"
+     
+     * `--step` runs all the tasks step by step with prompting.
+        eg. ansible-playbook playbook.yaml --step 
+      
+     * `debug` for more debugging.
+
    
 # Roles:
 
