@@ -112,6 +112,8 @@ It is an Automation tool for IT setup. It's Main Use Cases
                My amp goes to {{ max_amp_value }}
             ```
   
+ - ![Precedence](https://github.com/DevOpsStuff/ConfigurationManagement/blob/master/Ansible_vars.jpg)
+ 
 ### Ansible Facts
 
  - It is a way of gathering data from systems.
@@ -419,7 +421,8 @@ Let's see the examples of Ad-hoc commands.
    
         ```
         <p>
-        Hello there <p>
+            Hello there
+        <p>
         ServerName = server
         ```
    - For this particular server, the hostname is 'server'.
@@ -430,9 +433,9 @@ Let's see the examples of Ad-hoc commands.
 
    - "When" and with "not when" , more examples [here](https://gist.github.com/marcusphi/6791404)
    
-**Loops**
-   - Ansible loop types. To see a full list [click here](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html)
-       
+[**Loops**](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html)
+
+   - Ansible has many loop types.
    - loops with "with_items" and dict with "With_dict", More loop types
    
           - with_file: Evaluated a list of file
@@ -456,14 +459,13 @@ Let's see the examples of Ad-hoc commands.
  
    - Error handling can be done using below concepts,.
    
-    ```
-     - ignore_erros: True
-     - failed_when: result | failed
-     - failed_when: output.stdout.find('fail')!=-1  # this is stop the playbook immediately
-     - changed_when
-     ### Try catch finally
-     - resuce and always
-    ```
+    
+          - ignore_erros: True
+          - failed_when: result | failed
+          - failed_when: output.stdout.find('fail')!=-1  # this is stop the playbook immediately
+          - changed_when
+         ### Try catch finally
+          - resuce and always  
    
 [**Blocks**](https://docs.ansible.com/ansible/latest/user_guide/playbooks_blocks.html#blocks)
  
@@ -492,8 +494,27 @@ Let's see the examples of Ad-hoc commands.
  
   - Checkout the 'privilage escation part' in  the `/etc/ansible/ansible.cfg`.
   
- [**Delegation and Local Facts**](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#delegation)
+ [**Delegation,Rolling Update and Local Facts**](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#delegation-rolling-updates-and-local-actions)
  
+  [*Rolling Update:*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#rolling-update-batch-size)
+    By default, Ansible will try to manage all of the machines referenced in a play in parallel. For a rolling update use case, you can define how many hosts Ansible should manage at a single time by using the serial keyword:
+   
+   ```
+    - name: test play
+      hosts: webservers
+      serial: 3
+      
+      #Example 2
+      - name: test play
+        hosts: webservers
+        serial:
+           - 1
+           - 5
+           - 10
+   ```
+   
+ [*Delegation:*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#delegation)
+    
           --- 
           - name: Delegation
             hosts: node3
@@ -522,6 +543,12 @@ Let's see the examples of Ad-hoc commands.
              delegate_to: 127.0.0.1
              delegate_facts: true
              
+   [*Max Fail Percentage*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#maximum-failure-percentage)
+ 
+   [*Tags*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_tags.html#tags)
+  
+        If you have a large playbook it may become useful to be able to run a specific part of the configuration without running the whole playbook.
+   
  **Debugging Playbook**
  
  - There are many ways we can debug the playbooks. Yaml validator
@@ -541,7 +568,7 @@ Let's see the examples of Ad-hoc commands.
         eg. ansible-playbook playbook.yaml --step 
       
      * `debug` for more debugging.
-
+     
    
 # Roles:
 
@@ -572,3 +599,5 @@ Let's see the examples of Ad-hoc commands.
   - We would edit the files as required for the portions that our project needs. For instance, we would edit the `apache/tasks/main.yml`     file to put in the tasks that are required. We would edit the `apache/vars/main.yml` to put in any variables that are needed and so     on.
   - If you don't need a section then it's not used. So, for instance, if we put no data into `handlers/main.yml`, then it would be ignored when the role is run.
   
+# References
+  * [Ansible 2.0 and Beyond](https://www.slideshare.net/tappnel/ansible-v2-and-beyond-ansible-nyc-meetup)
