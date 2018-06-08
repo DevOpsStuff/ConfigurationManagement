@@ -685,7 +685,11 @@ Let's see the examples of Ad-hoc commands.
     
     $ ansible-vault view inventory.txt
     $ ansible-vault create inventory.txt
+    
+# Ansible Galaxy and Ansible Tower
 
+   - [link](https://docs.ansible.com/ansible/latest/reference_appendices/galaxy.html)
+   
 # Custom Modules
    For Creating a custom module, First we need to develop a python script. 
    
