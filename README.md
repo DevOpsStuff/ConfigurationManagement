@@ -701,3 +701,5 @@ Let's see the examples of Ad-hoc commands.
       
 # References
   * [Ansible 2.0 and Beyond](https://www.slideshare.net/tappnel/ansible-v2-and-beyond-ansible-nyc-meetup)
+  * [LEMP Example](https://mbbaig.blog/2017/10/31/install-lemp-stack-with-ansible-in-less-than-30-minutes/)
+  
