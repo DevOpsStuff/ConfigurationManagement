@@ -513,6 +513,14 @@ Let's see the examples of Ad-hoc commands.
            - 10
    ```
    
+  *Strategy*
+  
+     - It defines how a playbook is executed.
+     - Totally three strategy, it follows,
+          * Linear, Which is the default
+          * Free, Which doesn't dependent on other server for running the tasks.
+          * Batch, Which uses a serial, To specify how many servers to process.
+          
  [*Delegation:*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#delegation)
     
           --- 
@@ -534,6 +542,7 @@ Let's see the examples of Ad-hoc commands.
               local_action: wait for host={{inventory_hostname}} state=started delay=30 timeout=300
               become: no
               
+         ### Delegation Facts Tasks     
          - name: testing delegate facts
            hosts: node3
            become: yes
@@ -543,11 +552,63 @@ Let's see the examples of Ad-hoc commands.
              delegate_to: 127.0.0.1
              delegate_facts: true
              
-   [*Max Fail Percentage*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#maximum-failure-percentage)
+        ### Async, Poll, Async_status
+        - name: db and webserver
+          tasks: 
+          - command: /opt/monitor_app.py # A long running tasks
+            async: 360 # wait for 360 seconds
+            poll: 60 # which polls for every 60 seconds, to see the status. By default, 10 secs
+            register: webapp_result
+            
+          - command: /opt/monitor_database.py
+            async: 360
+            poll: 60 #
+            register: database_result
+            
+            ## if poll is mentioned as 0, Then move to another tasks
+          - name: check the status of tasks
+            async_status: jid={{ webapp_result.ansible_job_id }}
+            register: job_result
+            until: job_result.finished
+            retries: 30
+           
+         
+ [*Max Fail Percentage*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html#maximum-failure-percentage)
  
-   [*Tags*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_tags.html#tags)
+ [*lookup*](https://docs.ansible.com/ansible/2.3/playbooks_lookups.html#examples)
+          
+ [*Tags*](https://docs.ansible.com/ansible/latest/user_guide/playbooks_tags.html#tags)
   
-        If you have a large playbook it may become useful to be able to run a specific part of the configuration without running the whole playbook.
+   If you have a large playbook it may become useful to be able to run a specific part of the configuration without running the whole playbook.
+   - Playbook tags
+   - special tags
+   and many other tags....
+   
+ **Includes and Imports**
+ 
+ - we can include files.
+  Eg.
+  
+        tasks:
+        - name: Play 1 - Task1
+          debug: 
+              msg: play 1 - Task 1
+              
+        - include: play1_task2.yaml
+ 
+ *Static Vs Dynamic Tasks*
+  
+     include_* = Dynamic
+     include = Static - by Default which is deprecated now.
+     import_* = static
+     
+     Dynamic - best used when there are tasks that need to make decisions on dynamic gathered facts
+     Static -  best used for static components, that is the example tasks that are seprated into indiviuals files.
+     
+     #Other Considerations
+     
+     include_* - Dynamic - can be used with loops
+     import_* - Static - cannot be used with loops
    
  **Debugging Playbook**
  
@@ -599,5 +660,44 @@ Let's see the examples of Ad-hoc commands.
   - We would edit the files as required for the portions that our project needs. For instance, we would edit the `apache/tasks/main.yml`     file to put in the tasks that are required. We would edit the `apache/vars/main.yml` to put in any variables that are needed and so     on.
   - If you don't need a section then it's not used. So, for instance, if we put no data into `handlers/main.yml`, then it would be ignored when the role is run.
   
+# Ansible Vault
+
+  - Encrypting/Decrypting Files and variables.
+
+  To encrypt the inventory file or variables files,
+  
+    $ ansible-vault encrypt inventory.txt
+  
+  Now if we run the playbook command,
+  
+    $ ansible-playbook playbook.yml -i inventory.txt
+    
+  It will fail, Since the inventory files has been encrypted.To run the playbook.
+  
+    $ ansible-playbook playbook.yml -i inventory.txt -ask-vault-pass # It will ask the valut password to type.
+    
+ Other method top run the playbook is by passing a file or script.
+    
+    $ ansible-playbook playbook.yaml -i inventory.txt --vault-password-file ~./vault_pass.txt
+    $ ansible-playbook playbook.yaml -i inventory.txt --vault-password-file ~./vault_pass.py
+    
+ To view the inventory file,
+    
+    $ ansible-vault view inventory.txt
+    $ ansible-vault create inventory.txt
+
+# Custom Modules
+   For Creating a custom module, First we need to develop a python script. 
+   
+   - eg. Command Module examples.[Click here](https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/commands/command.py)
+   Coming Soon...
+ 
+# Creating Plugins 
+ 
+   *Custom Plugin*
+   *CallBack Plugin*
+     [Github](https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/callback)
+     Coming Soon...
+      
 # References
   * [Ansible 2.0 and Beyond](https://www.slideshare.net/tappnel/ansible-v2-and-beyond-ansible-nyc-meetup)
