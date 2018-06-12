@@ -1,0 +1,11 @@
+---
+- hosts: node1
+  tasks:
+  - name: gather local facts
+    setup:
+    delegate_to: 127.0.0.1
+    delegate_facts: true
+    register: delegate_output
+ 
+  - debug: msg="{{delegate_output}}"
+

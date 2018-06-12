@@ -1,0 +1,6 @@
+---
+ log_path: "/var/log/"
+ mariadb_port: 3306
+ max_connection: 300
+ basedir: "/usr"
+ tmpdir: "/tmp"

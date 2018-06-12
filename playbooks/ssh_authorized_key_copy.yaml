@@ -1,0 +1,12 @@
+---
+  - hosts: all
+    gather_facts: False
+    become: true
+    remote_user: ansible
+    tasks:
+    - name: Authoriezed key
+      authorized_key:
+              user: vagrant
+              state: present
+              manage_dir: yes
+              key: "{{ lookup('file' ,'~/.ssh/vagrant.pub') }}"

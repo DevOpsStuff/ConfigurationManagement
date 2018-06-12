@@ -1,0 +1,23 @@
+---
+- hosts: node1
+  remote_user: ansible
+  become: yes
+  tasks:
+  - name: Add a line
+    lineinfile:
+       dest: /home/ansible/hostname.conf
+       regexp: ^USER=.*
+       insertafter: ^# USER=
+       line: HOSTNAME={{ ansible_hostname }}
+  - name: Lineinfile
+    lineinfile:
+         path: /etc/selinux/config.conf
+         regexp: '^SELINUX='
+         line: 'SELINUX=enforcing'
+
+  - blockinfile:
+          path: /tmp/interfaces
+          block: |
+             iface eth0 inet static
+             address 192.0.2.23
+             netmask 255.255.255.0       

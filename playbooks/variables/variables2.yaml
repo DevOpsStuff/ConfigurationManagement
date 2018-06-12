@@ -1,0 +1,33 @@
+---
+- name: testing on variables and installing mariadb
+  hosts: "{{ node_name }}"
+  become: true
+  
+  vars_files:
+    - mariadb_vars.yaml
+
+  tasks:
+  - name: Install mariadb
+    package: name=mariadb-server state=latest
+ 
+  - name: create mysql configuration
+    template: src=configs/my.cnf.j2 dest=/tmp/my.cnf
+    notify:
+       - restart mysqldb
+   
+  - name: create a seprate log path for mariadb
+    file: 
+       path: "{{log_path}}/mysql.log" 
+       state: touch 
+       mode: 0775 
+       owner: mysql 
+       group: mysql
+   
+  - name: start mysqldb service
+    service: name=mysql state=started
+ 
+  handlers:
+    - name: restart mysqldb
+      service: name=mysql state=restarted
+    
+   

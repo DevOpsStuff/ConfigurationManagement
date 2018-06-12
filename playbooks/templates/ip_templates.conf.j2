@@ -1,0 +1,18 @@
+ip="{{ansible_all_ipv4_addresses}}"
+DateAndTime="Date: {{ansible_date_time.date}} Time: {{ansible_date_time.time}}"
+
+node1 {
+{% if "{{ ansible_distribution_version == 14.04 }}" %}
+    ip "{{ansible_all_ipv4_addresses}}"
+{%endif%}
+   host_name "{{ inventory_hostname }}"
+{% if "{{ 'ubuntu' in ansible_lsb.description }}" %}
+   os_name "{{ ansible_distribution }}"
+{% else %}
+   os_name "{{ ansible_distribution }}"
+{% endif %}
+}
+
+{% for host in groups['node1'] %}
+print "{{host}}" and "{{loop.index}}"
+{%endfor%}

@@ -1,0 +1,26 @@
+---
+- hosts: node1
+  tasks:
+   - name: Install Apache
+     block:
+       - package:
+           name: "{{ item }}"
+           state: present
+         with_items:
+           - lighttpd
+           - memcached
+       - template:
+           src: templates/src.j2
+           dest: /etc/foo.conf
+       - service:
+           name: lighttpd
+           state: started
+           enabled: True
+     when: ansible_distribution == 'Ubuntu'
+     become: true
+     become_user: root
+ 
+   - name: Another task
+     command: echo "Task 2"
+    
+

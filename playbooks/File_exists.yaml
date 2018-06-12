@@ -1,0 +1,32 @@
+---
+ - hosts: node1,node3
+   become: true
+
+   vars:
+     home_dir: /home/ansible
+
+   tasks:
+   - name: echoing
+     command: ls 
+     register: output
+
+   - debug: 
+       msg: "stdout={{ output.stdout }}"
+
+   - name: Check if /etc/motd file exists
+     stat:
+        path: /etc/motd
+     register: motd
+
+   - debug: var="{{motd}}"
+
+   - debug:
+       msg: "File Exists"
+     when: motd.stat.exists
+
+   - name: Create a file if the motd file doesn't exists
+     file: path=/etc/motd state=touch
+     when: motd.stat.exists == False
+
+       
+   

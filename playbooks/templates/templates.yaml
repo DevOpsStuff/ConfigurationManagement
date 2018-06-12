@@ -1,0 +1,8 @@
+---
+- name: testing on templates
+  hosts: node1,node3
+  remote_user: ansible
+  tasks:
+  - name: template task 1
+    template: src=ip_templates.conf.j2 dest=/tmp/ip_templates.conf
+    

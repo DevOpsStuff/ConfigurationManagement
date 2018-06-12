@@ -1,0 +1,10 @@
+---
+- name: User Creations
+  hosts: "{{node_name}}"
+  become: true 
+  tasks:
+
+  - name: more complex items to add several users
+    command: "ls {{ item }}"
+    with_fileglob:
+      - /tmp/*.conf

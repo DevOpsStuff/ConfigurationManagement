@@ -1,0 +1,8 @@
+---
+- name: Installing nginx and mysql
+  hosts: node3
+  become: true
+  become_method: sudo
+  roles:
+     - nginx
+     - mysql

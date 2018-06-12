@@ -1,0 +1,8 @@
+---
+- hosts: node3
+  become: true
+  tasks: 
+  - name: remove nginx
+    yum: name=nginx state=absent
+  - debug:
+       msg: "{{ ansible_os_family }} and {{ ansible_distribution }}"

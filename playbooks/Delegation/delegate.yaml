@@ -1,0 +1,31 @@
+--- 
+- name: Delegation
+  hosts: node3
+  become: yes
+        
+  tasks:
+  - name: restart machine
+    shell: sleep 2 && shutdown -r now "Ansible updates have happened"
+    async: 1
+    poll: 0
+    ignore_errors: True
+  - name: waiting for server to come back
+    wait_for: host={{inventory_hostname}} state=started delay=30 timeout=300
+    become: no
+    delegate_to: 127.0.0.1
+
+    # Before 2.0
+    #- name: wait for servers to come basck
+    #      local_action: wait for host={{inventory_hostname}} state=started delay=30 timeout=300
+    #      become: no
+          
+
+#---
+#- name: testing delegate facts
+#  hosts: node3
+#  become: yes
+#  tasks:
+#  - name: gather local facts
+#    setup: 
+#    delegate_to: 127.0.0.1
+#    delegate_facts: true

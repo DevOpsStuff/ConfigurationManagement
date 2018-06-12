@@ -1,0 +1,16 @@
+---
+- name: Testing on variables
+  hosts: "{{node_name}}"
+  become: true
+
+  vars:
+    file_path: "/var/log/messages"
+
+  tasks:
+  - name: checking the logs
+    command: "tail {{ file_path }}"
+    register: log_output
+    ignore_errors: yes
+
+  - debug: "msg={{log_output.stdout}}"
+    when: log_output.rc == 0   

@@ -1,0 +1,22 @@
+---
+ - hosts: frontend
+   remote_user: ansible
+   gather_facts: no
+   become: true
+   vars:
+     keeptimeout: 78
+     log_loc: "/var/log/nginx/access.log"
+ 
+   tasks:
+   - name: Ensure nginx has latest version
+     apt: name=nginx state=latest
+   - name: Write Nginx config file
+     template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
+     notify:
+        - nginx restart
+   - name: Ensure Nginx starting
+     service: name=nginx state=started
+
+   handlers:
+   - name: nginx restart
+     service: name=nginx state=restarted

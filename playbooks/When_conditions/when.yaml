@@ -1,0 +1,28 @@
+---
+- name: Ansible Conditionals Examples
+  hosts: node1
+  
+  vars:
+    simple_var: "hi"
+
+  tasks:
+########### Correct COMPLEX expressions ###################
+    - name: echo hello # OK only if isFirstRun is defined. 
+      command: echo hello
+      when: (isFirstRun == 'true')
+ 
+    - name: echo hello
+      command: echo hello
+      when: (isFirstRun != 'false')
+
+    - name: Not When
+      command: echo "Not Hello"
+      when: (not isFirstRun == 'false')
+
+    - name: Defined
+      command: echo "Defined"
+      when: ( simple_var is defined)
+
+    - name: Not Defined
+      command: echo "Not Defined"
+      when: ( simple_var is not defined )

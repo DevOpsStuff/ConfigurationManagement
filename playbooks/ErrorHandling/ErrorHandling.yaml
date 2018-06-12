@@ -1,0 +1,31 @@
+---
+- name: "Testing on Error Handling"
+  hosts: node1
+  become: true
+
+  vars:
+   log_path: "/var/log/messages"
+
+  tasks:
+  # Ignore Errors
+  - name: tail the messages
+    command: tail /var/log/messages
+    register: tail_output
+    ignore_errors: True
+  
+  #failed_when
+  - name: echo the messages
+    command: 'echo "failed to cat the {{ log_path }}"'
+    register: echo_output
+    failed_when: "'failed' in tail_output.stderr"
+ 
+  - debug: var=echo_output.stdout
+
+#  - name: echo the messages
+#    command: echo hello
+#    failed_when: echo_output|failed  
+
+  #Changed_when
+  - shell: /bin/ls -l
+    register: ls_result
+    changed_when: "ls_result.rc != 2"

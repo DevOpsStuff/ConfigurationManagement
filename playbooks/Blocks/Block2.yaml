@@ -1,0 +1,32 @@
+---
+- name: testing blocks
+  hosts: all
+  become: yes
+  tasks:
+  - block:
+     - name: copying in a block
+       copy: src=file1 dest=/tmp/blocks
+    rescue:
+     - debug: msg="error message"
+    always:
+     - debug: msg="this will always execute"
+
+- name: Testing resuces
+  hosts: all
+  tasks:
+  - name: Attempt and gracefull roll back demo
+    block:
+      - debug:
+          msg: 'I execute normally'
+      - command: /bin/true
+      - debug:
+          msg: 'I never execute, due to the above task failing'
+    rescue:
+      - debug:
+          msg: 'I caught an error'
+      - command: /bin/false
+      - debug:
+          msg: 'I also never execute :-('
+    always:
+      - debug:
+          msg: "this always executes"

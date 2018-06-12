@@ -1,0 +1,16 @@
+---
+- name: Nested Loop
+  hosts: "{{node_name}}"
+  become: true 
+  tasks:
+
+  - name: more complex items to add several users
+    debug:
+       msg: "{{ item[0] }} and {{ item[1] }} and {{ item[2] }}"
+       msg: "{{ item[1] }}"
+       msg: "{{ item[2] }}"
+    with_nested:
+       - [ 'alice', 'ansible','mani']
+       - [ 'kaala', 'ansible' ]
+       - [ 'hello', 'ansible','mani' ]
+#    when: ansible_distribution == 'Debian' and ansible_distribution == 'Ubuntu'

@@ -1,0 +1,9 @@
+---
+ - hosts: frontend
+   remote_user: ansible
+   gather_facts: no
+   become: true
+ 
+   tasks:
+   - name: Ensure nginx has latest version
+     apt: name=nginx state=absent

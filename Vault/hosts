@@ -1,0 +1,2 @@
+[node1]
+172.28.128.5 ansible_ssh_pass="ansible"

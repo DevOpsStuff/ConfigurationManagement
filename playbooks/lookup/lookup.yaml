@@ -1,0 +1,7 @@
+---
+- name: lookup modules
+  hosts: local
+  tasks:
+  - debug: msg="The node1 ip address is {{ lookup('csvfile','node1 file=node_details.csv delimiter=,') }}"
+  - debug: msg="The node1 ip address is {{ lookup('csvfile','node2 file=node_details.csv delimiter=, col=2') }}"
+   

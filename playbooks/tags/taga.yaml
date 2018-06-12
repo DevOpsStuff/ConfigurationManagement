@@ -1,0 +1,17 @@
+---
+- hosts: node2
+  tasks:
+  - name: tag1 example
+    command: ls -l
+    tags:
+       - listfiles
+
+  - name: tag2 example
+    command: touch /tmp/files
+    tags:
+       - filecreation
+
+  - name: tag3 example
+    command: "ls -l /var/log/syslog"
+    tags:
+       - listfiles
